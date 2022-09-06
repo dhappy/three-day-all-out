@@ -11,11 +11,14 @@
     "tw:watch": "yarn tw:build --watch"
   },
   "dependencies": {
+    "flowbite": "^1.5.3",
+    "luxon": "^3.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.1.8"
   },
   "devDependencies": {
+    "@types/luxon": "^3.0.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.1.0",
