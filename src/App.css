@@ -15,6 +15,7 @@ form {
 
       & > * {
         border: 1px solid #00000055;
+        
       }
     }
   }
@@ -285,4 +286,5 @@ legend {
 
 .solar {
   pointer-events: none;
+  align-self: center;
 }

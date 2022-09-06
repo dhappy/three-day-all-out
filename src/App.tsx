@@ -19,6 +19,27 @@ export const calculateTimes = (
   }
 )
 
+export const generateMap = () => {
+  const cols = [
+    document.querySelectorAll('fieldset fieldset:nth-of-type(2) > *'),
+    document.querySelectorAll('fieldset fieldset:nth-of-type(3) > *'),
+    document.querySelectorAll('fieldset fieldset:nth-of-type(4) > *'),
+    document.querySelectorAll('fieldset fieldset:nth-of-type(5) > *'),
+  ]
+  const checks = cols.map(
+    (col) => Array.from(col).map((elem) => {
+      if(!(elem instanceof HTMLLabelElement)) {
+        return undefined
+      }
+      const input = elem.querySelector('input')
+      return ({
+        checked: input == null ? null : input.checked,
+        id: elem.id,
+      })
+    }).filter((entry) => entry !== undefined)
+  )
+  console.debug({ checks })
+}
 
 export const Day: React.FC<{
   sunrise: DateTime
@@ -31,16 +52,20 @@ export const Day: React.FC<{
     | 'always'
   )
   selecting?: boolean
+  setSelecting?: (b: boolean) => void
   showSpan?: boolean
   iconOnly?: boolean
+  day?: number
 }> = (
 ({
   sunrise,
   sunset,
   unavailable = false,
   selecting = false,
+  setSelecting,
   showSpan = false,
   iconOnly = false,
+  day = 0
 }) => {
   return <>
     {Array.from({
@@ -50,19 +75,15 @@ export const Day: React.FC<{
         calculateTimes({ start: 0, idx })
       )
       return <>
-        {(hour === sunrise.hour && !half) && (
-          iconOnly ? <div>🌅</div> : (
-            <section className="solar">
-              🌅―{sunrise.toFormat('H:mm')}ᴇᴛ―🌅
-            </section>
-          )
-        )}
-        {(hour === sunset.hour && !half) && (
-          iconOnly ? <div>🌇</div> : (
-            <section className="solar">
-              🌇―{sunset.toFormat('H:mm')}ᴇᴛ―🌇
-            </section>
-          )
+        {((hour === sunrise.hour || hour === sunset.hour) && !half) && (
+          <section key={`solar-${span}`} className="solar">
+            {(hour === sunrise.hour && !half) && (
+              iconOnly ? '🌅' : `🌅―${sunrise.toFormat('H:mm')}ᴇᴛ―🌅`
+            )}
+            {(hour === sunset.hour && !half) && (
+              iconOnly ? '🌇' : `🌇―${sunset.toFormat('H:mm')}ᴇᴛ―🌇`
+            )}
+          </section>
         )}
         {
           (
@@ -88,9 +109,13 @@ export const Day: React.FC<{
           </div>
         ) : (
           <label
+            id={`${day}-${span}`}
             key={span}
             title={span}
             onMouseOver={(event) => {
+              if(event.buttons === 0) {
+                return setSelecting?.(false)
+              }
               const label = event.target as HTMLLabelElement
               const [child] = label.children as HTMLCollection
               const box = child as HTMLInputElement
@@ -149,7 +174,11 @@ export const App = () => {
     }
   }, [])
 
-
+  useEffect(() => {
+    if(!selecting) {
+      generateMap()
+    }
+  }, [selecting])
 
   return (
     <>
@@ -169,6 +198,7 @@ export const App = () => {
               <fieldset id="times">
                 <legend>Times</legend>
                 <Day
+                  day={0}
                   sunrise={sunrise[0]}
                   sunset={sunset[0]}
                   unavailable="always"
@@ -179,31 +209,35 @@ export const App = () => {
               <fieldset className="time">
                 <legend>Tuesday, November 22ⁿᵈ, 2022</legend>
                 <Day
+                  day={1}
                   unavailable="before sunrise"
                   sunrise={sunrise[0]}
                   sunset={sunset[0]}
-                  {...{ selecting }}
+                  {...{ selecting, setSelecting }}
                 />
               </fieldset>
               <fieldset className="time">
                 <legend>Wednesday, November 23ʳᵈ, 2022</legend>
                 <Day
+                  day={2}
                   sunrise={sunrise[1]}
                   sunset={sunset[1]}
-                  {...{ selecting }}
+                  {...{ selecting, setSelecting }}
                 />
               </fieldset>
               <fieldset className="time">
                 <legend>Thursday, November 24ᵗʰ, 2022</legend>
                 <Day
+                  day={3}
                   sunrise={sunrise[2]}
                   sunset={sunset[2]}
-                  {...{ selecting }}
+                  {...{ selecting, setSelecting }}
                 />
               </fieldset>
               <fieldset className="time">
                 <legend>Friday, November 25ᵗʰ, 2022</legend>
                 <Day
+                  day={4}
                   unavailable="after sunrise"
                   sunrise={sunrise[3]}
                   sunset={sunset[3]}
