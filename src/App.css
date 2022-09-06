@@ -1,0 +1,30 @@
+form {
+  display: inline-block;
+
+  & > fieldset {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+fieldset {
+  border: 2px solid;
+  text-align: center;
+  justify-content: space-around;
+}
+
+label {
+  border-radius: 25%;
+  background-color: #DDDDDD99;
+  padding: 0.5rem;
+  margin: 0.25rem;
+}
+
+label:has(input:checked) {
+  background-color: #00FF0099;
+}
+
+input[type="checkbox"] {
+  visibility: hidden;
+}
+

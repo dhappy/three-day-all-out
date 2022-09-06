@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import './App.pcss'
+import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <body>
+    <>
       <header>
         <button>Sign-In With Ethereum</button>
       </header>
@@ -17,35 +17,50 @@ function App() {
           <p>These are markers for times that the given group is available.</p>
 
           <form>
-            <fieldset className="flex">
+            <fieldset>
               <legend>Applicable Days</legend>
-              <fieldset className="inline-block">
-                <legend>Start Date</legend>
-                <input type="date" name="date.start"/>
-              </fieldset>
-              <fieldset className="inline-block">
-                <legend>End Date</legend>
-                <input type="date" name="date.end"/>
+              <fieldset>
+                <legend>November 2022</legend>
+                <label>
+                  22ⁿᵈ
+                  <input type="checkbox" name="date.22nd"/>
+                </label>
+                <label>
+                  23ʳᵈ
+                  <input type="checkbox" name="date.23rd"/>
+                </label>
+                <label>
+                  24ᵗʰ
+                  <input type="checkbox" name="date.24th"/>
+                </label>
               </fieldset>
             </fieldset>
             <fieldset>
               <legend>Start Time</legend>
-              <label htmlFor="start.earliest">Earliest Start Time</label>
-              <input type="time" name="start.earliest"/>
-              <label htmlFor="start.latest">Latest Start Time</label>
-              <input type="time" name="start.latest"/>
+              <fieldset>
+                <legend>Earliest Start Time</legend>
+                <input type="time" name="start.earliest"/>
+              </fieldset>
+              <fieldset>
+                <legend>Latest Start Time</legend>
+                <input type="time" name="start.latest"/>
+              </fieldset>
             </fieldset>
             <fieldset>
               <legend>End Time</legend>
-              <label htmlFor="end.earliest">Earliest End Time</label>
-              <input type="time" name="end.earliest"/>
-              <label htmlFor="end.latest">Latest End Time</label>
-              <input type="time" name="end.latest"/>
+              <fieldset>
+                <legend>Earliest End Time</legend>
+                <input type="time" name="end.earliest"/>
+              </fieldset>
+              <fieldset>
+                <legend>Latest End Time</legend>
+                <input type="time" name="end.latest"/>
+              </fieldset>
             </fieldset>
           </form>
         </section>
       </main>
-    </body>
+    </>
   )
 }
 
