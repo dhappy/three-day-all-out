@@ -4,9 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "vite:dev": "vite",
+    "vite:build": "tsc && vite build",
+    "vite:preview": "vite preview",
+    "tw:build": "npx tailwindcss -i ./src/App.pcss -o ./dist/App.css",
+    "tw:watch": "yarn tw:build --watch"
   },
   "dependencies": {
     "react": "^18.2.0",
