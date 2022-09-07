@@ -41,6 +41,10 @@ export const generateMap = () => {
   console.debug({ checks })
 }
 
+export type TimeSpan ={
+  start: number
+  duration: number
+}
 export const Day: React.FC<{
   sunrise: DateTime
   sunset: DateTime
@@ -56,6 +60,7 @@ export const Day: React.FC<{
   showSpan?: boolean
   iconOnly?: boolean
   day?: number
+  taken?: Array<TimeSpan>
 }> = (
 ({
   sunrise,
@@ -65,7 +70,8 @@ export const Day: React.FC<{
   setSelecting,
   showSpan = false,
   iconOnly = false,
-  day = 0
+  day = 0,
+  taken = [],
 }) => {
   return <>
     {Array.from({
@@ -85,8 +91,8 @@ export const Day: React.FC<{
             )}
           </section>
         )}
-        {
-          (
+        {(() => {
+          if(
             (
               unavailable === 'before sunrise'
               && (idx / 2) < (sunrise.hour)
@@ -99,49 +105,53 @@ export const Day: React.FC<{
               && ((idx + 1) / 2) > sunrise.hour
             )
             || (unavailable === 'always')
-          ) ? (
-          <div
-            className="unavailable"
-            key={span}
-            title={`Unavailable: ${span}`}
-          >
-            {showSpan && (idx === 0 ? span : short)}
-          </div>
-        ) : (
-          <label
-            id={`${day}-${span}`}
-            key={span}
-            title={span}
-            onMouseOver={(event) => {
-              if(event.buttons === 0) {
-                return setSelecting?.(false)
-              }
-              const label = event.target as HTMLLabelElement
-              const [child] = label.children as HTMLCollection
-              const box = child as HTMLInputElement
-              if(box != null) {
-                if(selecting) {
-                  if(event.ctrlKey) {
-                    box.checked = true
-                  } else if(event.shiftKey) {
-                    box.checked = false
-                  } else {
-                    box.checked = !box.checked
+          ) {
+            return (
+              <div
+                className="unavailable"
+                key={span}
+                title={`Unavailable: ${span}`}
+              >
+                {showSpan && (idx === 0 ? span : short)}
+              </div>
+            )
+          }
+          return {
+            <label
+              id={`${day}-${span}`}
+              key={span}
+              title={span}
+              onMouseOver={(event) => {
+                if(event.buttons === 0) {
+                  return setSelecting?.(false)
+                }
+                const label = event.target as HTMLLabelElement
+                const [child] = label.children as HTMLCollection
+                const box = child as HTMLInputElement
+                if(box != null) {
+                  if(selecting) {
+                    if(event.ctrlKey) {
+                      box.checked = true
+                    } else if(event.shiftKey) {
+                      box.checked = false
+                    } else {
+                      box.checked = !box.checked
+                    }
                   }
                 }
-              }
-            }}
-          >
-            <input
-              type="checkbox"
-              name={`slot.1-${span}`}
-            />
-          </label>
-        )}
+              }}
+            >
+              <input
+                type="checkbox"
+                name={`slot.1-${span}`}
+              />
+            </label>
+          )
+        })()}
       </>
-    })}
+    })
   </>
-})
+
 
 export const App = () => {
   const sunrise = [
