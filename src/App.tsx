@@ -116,7 +116,7 @@ export const Day: React.FC<{
               </div>
             )
           }
-          return {
+          return (
             <label
               id={`${day}-${span}`}
               key={span}
@@ -149,9 +149,9 @@ export const Day: React.FC<{
           )
         })()}
       </>
-    })
+    })}
   </>
-
+}
 
 export const App = () => {
   const sunrise = [
