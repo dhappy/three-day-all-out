@@ -62,97 +62,104 @@ export const Day: React.FC<{
   day?: number
   taken?: Array<TimeSpan>
 }> = (
-({
-  sunrise,
-  sunset,
-  unavailable = false,
-  selecting = false,
-  setSelecting,
-  showSpan = false,
-  iconOnly = false,
-  day = 0,
-  taken = [],
-}) => {
-  return <>
-    {Array.from({
-      length: (24) * 2
-    }).map((_: unknown, idx: number) => {
-      const { span, hour, half, short } = (
-        calculateTimes({ start: 0, idx })
-      )
-      return <>
-        {((hour === sunrise.hour || hour === sunset.hour) && !half) && (
-          <section key={`solar-${span}`} className="solar">
-            {(hour === sunrise.hour && !half) && (
-              iconOnly ? '🌅' : `🌅―${sunrise.toFormat('H:mm')}ᴇᴛ―🌅`
-            )}
-            {(hour === sunset.hour && !half) && (
-              iconOnly ? '🌇' : `🌇―${sunset.toFormat('H:mm')}ᴇᴛ―🌇`
-            )}
-          </section>
-        )}
-        {(() => {
-          if(
-            (
-              unavailable === 'before sunrise'
-              && (idx / 2) < (sunrise.hour)
-            )
-            || (
-              unavailable === 'after sunset'
-              && (idx / 2) > sunset.hour)
-            || (
-              unavailable === 'after sunrise'
-              && ((idx + 1) / 2) > sunrise.hour
-            )
-            || (unavailable === 'always')
-          ) {
+  ({
+    sunrise,
+    sunset,
+    unavailable = false,
+    selecting = false,
+    setSelecting,
+    showSpan = false,
+    iconOnly = false,
+    day = 0,
+    taken = [],
+  }) => {
+    return <>
+      {Array.from({
+        length: (24) * 2
+      }).map((_: unknown, idx: number) => {
+        const { span, hour, half, short } = (
+          calculateTimes({ start: 0, idx })
+        )
+        return <>
+          {((hour === sunrise.hour || hour === sunset.hour) && !half) && (
+            <section key={`solar-${span}`} className="solar">
+              {(hour === sunrise.hour && !half) && (
+                iconOnly ? '🌅' : `🌅―${sunrise.toFormat('H:mm')}ᴇᴛ―🌅`
+              )}
+              {(hour === sunset.hour && !half) && (
+                iconOnly ? '🌇' : `🌇―${sunset.toFormat('H:mm')}ᴇᴛ―🌇`
+              )}
+            </section>
+          )}
+          {(() => {
+            if(
+              (
+                unavailable === 'before sunrise'
+                && (idx / 2) < (sunrise.hour)
+              )
+              || (
+                unavailable === 'after sunset'
+                && (idx / 2) > sunset.hour)
+              || (
+                unavailable === 'after sunrise'
+                && ((idx + 1) / 2) > sunrise.hour
+              )
+              || (unavailable === 'always')
+            ) {
+              return (
+                <div
+                  className="unavailable"
+                  key={span}
+                  title={`Unavailable: ${span}`}
+                >
+                  {showSpan && (idx === 0 ? span : short)}
+                </div>
+              )
+            }
+            console.log({hour})
+            if(taken.reduce((acc, cur) => (
+              acc || (hour - cur.start > 0 && hour - cur.start < cur.duration)
+            ), false)){
+              return <>test</>
+            }
+
             return (
-              <div
-                className="unavailable"
+              <label
+                id={`${day}-${span}`}
                 key={span}
-                title={`Unavailable: ${span}`}
-              >
-                {showSpan && (idx === 0 ? span : short)}
-              </div>
-            )
-          }
-          return (
-            <label
-              id={`${day}-${span}`}
-              key={span}
-              title={span}
-              onMouseOver={(event) => {
-                if(event.buttons === 0) {
-                  return setSelecting?.(false)
-                }
-                const label = event.target as HTMLLabelElement
-                const [child] = label.children as HTMLCollection
-                const box = child as HTMLInputElement
-                if(box != null) {
-                  if(selecting) {
-                    if(event.ctrlKey) {
-                      box.checked = true
-                    } else if(event.shiftKey) {
-                      box.checked = false
-                    } else {
-                      box.checked = !box.checked
+                title={span}
+                onMouseOver={(event) => {
+                  if(event.buttons === 0) {
+                    return setSelecting?.(false)
+                  }
+                  const label = event.target as HTMLLabelElement
+                  const [child] = label.children as HTMLCollection
+                  const box = child as HTMLInputElement
+                  if(box != null) {
+                    if(selecting) {
+                      if(event.ctrlKey) {
+                        box.checked = true
+                      } else if(event.shiftKey) {
+                        box.checked = false
+                      } else {
+                        box.checked = !box.checked
+                      }
                     }
                   }
-                }
-              }}
-            >
-              <input
-                type="checkbox"
-                name={`slot.1-${span}`}
-              />
-            </label>
-          )
-        })()}
-      </>
-    })}
-  </>
-}
-
+                }}
+              >
+                <input
+                  type="checkbox"
+                  name={`slot.1-${span}`}
+                />
+              </label>
+            )
+          })()}
+        </>
+      })}
+    </>
+  }
+)
 export const App = () => {
   const sunrise = [
     DateTime.fromISO('2022-11-22T07:14:00-05:00'),
@@ -224,6 +231,7 @@ export const App = () => {
                   sunrise={sunrise[0]}
                   sunset={sunset[0]}
                   {...{ selecting, setSelecting }}
+                  taken={[{start:7, duration:5}]}
                 />
               </fieldset>
               <fieldset className="time">
